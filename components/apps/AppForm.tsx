@@ -47,7 +47,17 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
   const handleFetchGitHub = async () => {
     if (!githubRepoUrl) return;
 
+    console.log("🔍 Fetching GitHub data for:", githubRepoUrl);
     const data = await fetchGitHub.mutateAsync(githubRepoUrl);
+    
+    console.log("📥 GitHub data received in AppForm:", {
+      repoName: data?.repoName,
+      repoOwner: data?.repoOwner,
+      stars: data?.stars,
+      hasReadme: !!data?.readme,
+      readmeLength: data?.readme?.length || 0,
+      readmePreview: data?.readme?.substring(0, 100),
+    });
     
     if (data) {
       // Auto-populate form fields
@@ -88,6 +98,7 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
     
     if (data.githubRepoUrl && data.githubRepoUrl !== defaultValues?.githubRepoUrl) {
       try {
+        console.log("📤 Fetching GitHub metadata before submit:", data.githubRepoUrl);
         const metadata = await fetchGitHub.mutateAsync(data.githubRepoUrl);
         githubMetadata = {
           repoName: metadata.repoName,
@@ -97,13 +108,23 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
           branches: metadata.branches,
           readme: metadata.readme,
         };
+        console.log("✅ GitHub metadata to be saved:", {
+          ...githubMetadata,
+          readme: githubMetadata.readme ? `${githubMetadata.readme.length} chars` : 'none',
+        });
       } catch (error) {
-        console.error("Failed to fetch GitHub metadata:", error);
+        console.error("❌ Failed to fetch GitHub metadata:", error);
         // Continue with form submission even if GitHub fetch fails
       }
     }
     
-    onSubmit({ ...data, tags, ...githubMetadata });
+    const finalData = { ...data, tags, ...githubMetadata };
+    console.log("💾 Submitting app data:", {
+      ...finalData,
+      readme: finalData.readme ? `${finalData.readme.length} chars` : 'none',
+    });
+    
+    onSubmit(finalData);
   };
 
   return (

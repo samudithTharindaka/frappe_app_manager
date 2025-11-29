@@ -77,11 +77,14 @@ export async function fetchRepoMetadata(
         repo,
       });
       readme = Buffer.from(readmeData.content, "base64").toString("utf-8");
+      console.log(`✅ README fetched successfully for ${owner}/${repo}`);
+      console.log(`📄 README length: ${readme.length} characters`);
+      console.log(`📄 README preview (first 200 chars): ${readme.substring(0, 200)}...`);
     } catch {
-      console.log("No README found for repository");
+      console.log(`⚠️ No README found for repository ${owner}/${repo}`);
     }
 
-    return {
+    const result = {
       repoName: repoData.name,
       repoOwner: repoData.owner.login,
       description: repoData.description || "",
@@ -90,6 +93,17 @@ export async function fetchRepoMetadata(
       branches: branchesData.map((branch) => branch.name),
       readme,
     };
+
+    console.log("📦 GitHub metadata fetched:", {
+      repoName: result.repoName,
+      repoOwner: result.repoOwner,
+      stars: result.stars,
+      branches: result.branches,
+      hasReadme: !!result.readme,
+      readmeLength: result.readme?.length || 0,
+    });
+
+    return result;
   } catch (error: any) {
     console.error("GitHub API Error:", error.message);
     throw new Error(`Failed to fetch GitHub data: ${error.message}`);

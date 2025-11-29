@@ -78,12 +78,21 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
+    console.log("📥 POST /api/apps - Received data:", {
+      name: body.name,
+      hasReadme: !!body.readme,
+      readmeLength: body.readme?.length || 0,
+      keys: Object.keys(body),
+    });
+    
     const validatedData = appSchema.parse(body);
 
     const app = await App.create({
       ...validatedData,
       createdBy: (session.user as any).id,
     });
+
+    console.log("✅ App created with ID:", app._id, "README saved:", !!app.readme);
 
     const populatedApp = await App.findById(app._id).populate(
       "createdBy",

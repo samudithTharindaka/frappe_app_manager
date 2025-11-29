@@ -23,6 +23,13 @@ export async function POST(request: NextRequest) {
 
     const metadata = await fetchRepoMetadata(repoUrl);
 
+    console.log("🚀 GitHub API route returning data:", {
+      repoName: metadata.repoName,
+      repoOwner: metadata.repoOwner,
+      hasReadme: !!metadata.readme,
+      readmeLength: metadata.readme?.length || 0,
+    });
+
     return NextResponse.json(metadata);
   } catch (error: any) {
     console.error("POST /api/github/fetch error:", error);
