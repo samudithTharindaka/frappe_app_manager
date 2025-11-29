@@ -103,7 +103,7 @@ function AppsListContent() {
           </div>
 
           <Link href="/apps/new">
-            <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white shadow-sm">
+            <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white shadow-md font-semibold">
               <Plus className="mr-2 h-5 w-5" />
               Add New App
             </Button>
@@ -111,28 +111,28 @@ function AppsListContent() {
         </motion.div>
 
         {/* Stats Cards - Interactive & Clickable */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <StatsCard
             title="Total Apps"
             value={stats.total}
             icon={Layers}
-            colorClass="bg-gradient-to-r from-indigo-500 to-purple-500"
+            variant="default"
             href="/apps"
             delay={0}
           />
           <StatsCard
-            title="Active Apps"
+            title="Active"
             value={stats.active}
             icon={CheckCircle2}
-            colorClass="bg-gradient-to-r from-emerald-500 to-green-500"
+            variant="success"
             href="/apps?status=Active"
             delay={0.05}
           />
           <StatsCard
-            title="Internal Apps"
+            title="Internal"
             value={stats.internal}
             icon={Lock}
-            colorClass="bg-gradient-to-r from-blue-500 to-cyan-500"
+            variant="info"
             href="/apps?status=Internal"
             delay={0.1}
           />
@@ -140,7 +140,7 @@ function AppsListContent() {
             title="Deprecated"
             value={stats.deprecated}
             icon={XCircle}
-            colorClass="bg-gradient-to-r from-gray-400 to-gray-500"
+            variant="warning"
             href="/apps?status=Deprecated"
             delay={0.15}
           />

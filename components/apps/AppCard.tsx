@@ -28,18 +28,21 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
   const canEdit = userRole === "Admin" || userRole === "Dev";
   const canDelete = userRole === "Admin";
 
+  const statusStyles = {
+    Active: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    Deprecated: "bg-amber-50 text-amber-700 border-amber-200",
+    Internal: "bg-blue-50 text-blue-700 border-blue-200",
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
     >
-      <Card className="group relative overflow-hidden border border-gray-200 bg-white hover:border-gray-900 hover:shadow-xl transition-all duration-300">
-        {/* Top accent bar on hover */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gray-900 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-        
+      <Card className="group relative overflow-hidden border border-gray-200 bg-white hover:border-gray-300 hover:shadow-xl transition-all duration-300">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-3">
             <Link href={`/apps/${app._id}`} className="flex-1 min-w-0">
@@ -49,11 +52,7 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
             </Link>
             
             <Badge 
-              className={`shrink-0 font-medium border ${
-                app.status === "Active" 
-                  ? "bg-gray-900 text-white border-gray-900" 
-                  : "bg-white text-gray-600 border-gray-300"
-              }`}
+              className={`${statusStyles[app.status as keyof typeof statusStyles]} shrink-0 font-medium border`}
             >
               {app.status}
             </Badge>
@@ -78,11 +77,11 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
                   href={app.githubRepoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-md border border-gray-200 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs text-gray-700 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 transition-colors"
                 >
                   <Github className="h-3.5 w-3.5" />
                   <span>Repository</span>
-                  <ExternalLink className="h-3 w-3 opacity-60" />
+                  <ExternalLink className="h-3 w-3 opacity-50" />
                 </a>
               )}
               
@@ -91,11 +90,11 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
                   href={app.frappeCloudUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-gray-900 hover:text-white bg-white hover:bg-gray-900 px-3 py-1.5 rounded-md border border-gray-900 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors"
                 >
                   <Cloud className="h-3.5 w-3.5" />
                   <span>Frappe Cloud</span>
-                  <ExternalLink className="h-3 w-3 opacity-60" />
+                  <ExternalLink className="h-3 w-3 opacity-50" />
                 </a>
               )}
             </div>
@@ -106,7 +105,7 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
             <div className="flex items-center gap-4 text-xs text-gray-500">
               {app.stars !== undefined && (
                 <div className="flex items-center gap-1">
-                  <Star className="h-3.5 w-3.5" />
+                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                   <span>{app.stars}</span>
                 </div>
               )}
@@ -126,13 +125,13 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
                 <Badge
                   key={tag}
                   variant="secondary"
-                  className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 font-normal"
+                  className="text-xs bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 font-normal"
                 >
                   {tag}
                 </Badge>
               ))}
               {app.tags.length > 3 && (
-                <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600 border border-gray-200 font-normal">
+                <Badge variant="secondary" className="text-xs bg-gray-50 text-gray-600 border border-gray-200 font-normal">
                   +{app.tags.length - 3}
                 </Badge>
               )}
@@ -148,7 +147,7 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
               </span>
             </div>
             {app.version && (
-              <span className="font-mono font-medium text-gray-900 bg-gray-100 px-2 py-0.5 rounded">
+              <span className="font-mono font-medium text-gray-700 bg-gray-50 px-2 py-0.5 rounded border border-gray-200">
                 v{app.version}
               </span>
             )}
@@ -157,7 +156,11 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
 
         <CardFooter className="gap-2 pt-4 border-t border-gray-100 bg-gray-50/50">
           <Link href={`/apps/${app._id}`} className="flex-1">
-            <Button variant="outline" size="sm" className="w-full hover:bg-gray-900 hover:text-white hover:border-gray-900">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full border-gray-300 hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all"
+            >
               <Eye className="h-4 w-4 mr-2" />
               View Details
             </Button>
@@ -165,7 +168,11 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
           
           {canEdit && (
             <Link href={`/apps/${app._id}/edit`}>
-              <Button variant="outline" size="sm" className="hover:bg-gray-100">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-gray-300 hover:bg-gray-50"
+              >
                 <Edit className="h-4 w-4" />
               </Button>
             </Link>
@@ -176,7 +183,7 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
               variant="outline"
               size="sm"
               onClick={() => onDelete(app._id)}
-              className="text-gray-900 hover:text-white hover:bg-gray-900 hover:border-gray-900"
+              className="border-gray-300 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
