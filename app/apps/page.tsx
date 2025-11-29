@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApps, useDeleteApp } from "@/hooks/useApps";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { AppCard } from "@/components/apps/AppCard";
+import { StatsCard } from "@/components/dashboard/StatsCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,20 +15,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Search, Filter, Grid3x3, List, Loader2 } from "lucide-react";
+import { Plus, Search, Filter, Grid3x3, List, Loader2, Layers, CheckCircle2, Lock, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useSearchParams, useRouter } from "next/navigation";
 
 function AppsListContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
   const [filters, setFilters] = useState({
     search: "",
-    status: "",
+    status: searchParams.get("status") || "",
     tags: "",
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Update filters when URL params change
+  useEffect(() => {
+    const statusParam = searchParams.get("status");
+    if (statusParam && statusParam !== filters.status) {
+      setFilters(prev => ({ ...prev, status: statusParam }));
+    }
+  }, [searchParams]);
 
   const { data: session } = useSession();
   const { data: apps = [], isLoading } = useApps(filters);
@@ -49,6 +62,18 @@ function AppsListContent() {
     active: apps.filter((app: any) => app.status === "Active").length,
     deprecated: apps.filter((app: any) => app.status === "Deprecated").length,
     internal: apps.filter((app: any) => app.status === "Internal").length,
+  };
+
+  const handleStatusFilter = (status: string) => {
+    const newStatus = status === "all" ? "" : status;
+    setFilters({ ...filters, status: newStatus });
+    
+    // Update URL
+    if (newStatus) {
+      router.push(`/apps?status=${newStatus}`);
+    } else {
+      router.push("/apps");
+    }
   };
 
   const containerVariants = {
@@ -85,33 +110,41 @@ function AppsListContent() {
           </Link>
         </motion.div>
 
-        {/* Stats Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4"
-        >
-          <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-indigo-200 hover:shadow-md transition-all">
-            <p className="text-sm font-medium text-gray-600">Total Apps</p>
-            <p className="text-3xl font-bold text-gray-900 mt-1">{stats.total}</p>
-          </div>
-          
-          <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-emerald-200 hover:shadow-md transition-all">
-            <p className="text-sm font-medium text-gray-600">Active</p>
-            <p className="text-3xl font-bold text-emerald-600 mt-1">{stats.active}</p>
-          </div>
-          
-          <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-200 hover:shadow-md transition-all">
-            <p className="text-sm font-medium text-gray-600">Internal</p>
-            <p className="text-3xl font-bold text-blue-600 mt-1">{stats.internal}</p>
-          </div>
-          
-          <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-gray-300 hover:shadow-md transition-all">
-            <p className="text-sm font-medium text-gray-600">Deprecated</p>
-            <p className="text-3xl font-bold text-gray-600 mt-1">{stats.deprecated}</p>
-          </div>
-        </motion.div>
+        {/* Stats Cards - Interactive & Clickable */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatsCard
+            title="Total Apps"
+            value={stats.total}
+            icon={Layers}
+            colorClass="bg-gradient-to-r from-indigo-500 to-purple-500"
+            href="/apps"
+            delay={0}
+          />
+          <StatsCard
+            title="Active Apps"
+            value={stats.active}
+            icon={CheckCircle2}
+            colorClass="bg-gradient-to-r from-emerald-500 to-green-500"
+            href="/apps?status=Active"
+            delay={0.05}
+          />
+          <StatsCard
+            title="Internal Apps"
+            value={stats.internal}
+            icon={Lock}
+            colorClass="bg-gradient-to-r from-blue-500 to-cyan-500"
+            href="/apps?status=Internal"
+            delay={0.1}
+          />
+          <StatsCard
+            title="Deprecated"
+            value={stats.deprecated}
+            icon={XCircle}
+            colorClass="bg-gradient-to-r from-gray-400 to-gray-500"
+            href="/apps?status=Deprecated"
+            delay={0.15}
+          />
+        </div>
 
         {/* Search and Filters */}
         <motion.div
@@ -182,9 +215,7 @@ function AppsListContent() {
                   </label>
                   <Select
                     value={filters.status || "all"}
-                    onValueChange={(value) =>
-                      setFilters({ ...filters, status: value === "all" ? "" : value })
-                    }
+                    onValueChange={handleStatusFilter}
                   >
                     <SelectTrigger className="border-gray-200">
                       <SelectValue placeholder="All Status" />
@@ -238,7 +269,7 @@ function AppsListContent() {
                 <Badge variant="secondary" className="gap-1 bg-gray-100 text-gray-700 hover:bg-gray-200">
                   Status: {filters.status}
                   <button
-                    onClick={() => setFilters({ ...filters, status: "" })}
+                    onClick={() => handleStatusFilter("all")}
                     className="ml-1 hover:text-red-600"
                   >
                     ×
@@ -259,7 +290,10 @@ function AppsListContent() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setFilters({ search: "", status: "", tags: "" })}
+                onClick={() => {
+                  setFilters({ search: "", status: "", tags: "" });
+                  router.push("/apps");
+                }}
                 className="text-xs h-7 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
               >
                 Clear all
