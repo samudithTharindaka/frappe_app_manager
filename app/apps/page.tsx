@@ -103,7 +103,7 @@ function AppsListContent() {
           </div>
 
           <Link href="/apps/new">
-            <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            <Button size="lg" className="bg-gray-900 hover:bg-gray-800 text-white shadow-sm">
               <Plus className="mr-2 h-5 w-5" />
               Add New App
             </Button>
@@ -173,7 +173,7 @@ function AppsListContent() {
                 variant={showFilters ? "default" : "outline"}
                 size="icon"
                 onClick={() => setShowFilters(!showFilters)}
-                className={showFilters ? "bg-indigo-600 hover:bg-indigo-700" : "hover:bg-gray-50"}
+                className={showFilters ? "bg-gray-900 hover:bg-gray-800 text-white" : "hover:bg-gray-50"}
               >
                 <Filter className="h-4 w-4" />
               </Button>
@@ -183,7 +183,7 @@ function AppsListContent() {
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="icon"
                   onClick={() => setViewMode("grid")}
-                  className={viewMode === "grid" ? "bg-indigo-600 hover:bg-indigo-700" : "hover:bg-gray-50"}
+                  className={viewMode === "grid" ? "bg-gray-900 hover:bg-gray-800 text-white" : "hover:bg-gray-50"}
                 >
                   <Grid3x3 className="h-4 w-4" />
                 </Button>
@@ -191,7 +191,7 @@ function AppsListContent() {
                   variant={viewMode === "list" ? "default" : "ghost"}
                   size="icon"
                   onClick={() => setViewMode("list")}
-                  className={viewMode === "list" ? "bg-indigo-600 hover:bg-indigo-700" : "hover:bg-gray-50"}
+                  className={viewMode === "list" ? "bg-gray-900 hover:bg-gray-800 text-white" : "hover:bg-gray-50"}
                 >
                   <List className="h-4 w-4" />
                 </Button>
@@ -294,7 +294,7 @@ function AppsListContent() {
                   setFilters({ search: "", status: "", tags: "" });
                   router.push("/apps");
                 }}
-                className="text-xs h-7 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                className="text-xs h-7 text-gray-900 hover:text-gray-700 hover:bg-gray-100"
               >
                 Clear all
               </Button>
@@ -305,7 +305,7 @@ function AppsListContent() {
         {/* Apps Grid/List */}
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-gray-900" />
           </div>
         ) : apps.length === 0 ? (
           <motion.div
@@ -326,7 +326,7 @@ function AppsListContent() {
             </p>
             {!filters.search && !filters.status && !filters.tags && (
               <Link href="/apps/new">
-                <Button className="bg-indigo-600 hover:bg-indigo-700">
+                <Button className="bg-gray-900 hover:bg-gray-800 text-white">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Your First App
                 </Button>
@@ -366,7 +366,7 @@ export default function AppsListPage() {
     <Suspense fallback={
       <DashboardLayout>
         <div className="flex items-center justify-center h-96">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-gray-900" />
         </div>
       </DashboardLayout>
     }>
