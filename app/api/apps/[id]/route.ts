@@ -58,7 +58,19 @@ export async function PATCH(
     await connectDB();
 
     const body = await request.json();
+    console.log("📥 PATCH /api/apps/[id] - Received data:", {
+      name: body.name,
+      hasReadme: !!body.readme,
+      readmeLength: body.readme?.length || 0,
+      keys: Object.keys(body),
+    });
+    
     const validatedData = appUpdateSchema.parse(body);
+    console.log("✅ After validation:", {
+      hasReadme: !!validatedData.readme,
+      readmeLength: validatedData.readme?.length || 0,
+      validatedKeys: Object.keys(validatedData),
+    });
 
     const { id } = await params;
     const app = await App.findByIdAndUpdate(
@@ -70,6 +82,8 @@ export async function PATCH(
     if (!app) {
       return NextResponse.json({ error: "App not found" }, { status: 404 });
     }
+
+    console.log("✅ App updated with ID:", app._id, "README saved:", !!app.readme, "Length:", app.readme?.length || 0);
 
     return NextResponse.json(app);
   } catch (error: any) {

@@ -179,9 +179,21 @@ export default function AppDetailsPage({ params }: { params: Promise<{ id: strin
               </CardHeader>
               <CardContent>
                 {app.readme ? (
-                  <MarkdownViewer content={app.readme} />
+                  <>
+                    <MarkdownViewer content={app.readme} />
+                    <p className="text-xs text-gray-400 mt-4">
+                      README fetched from GitHub • {app.readme.length} characters
+                    </p>
+                  </>
                 ) : (
-                  <p className="text-gray-500">No README available</p>
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 mb-2">No README available</p>
+                    {app.githubRepoUrl && (
+                      <p className="text-sm text-gray-400">
+                        GitHub URL is set, but README wasn&apos;t fetched. Try editing the app and clicking &quot;Fetch Data&quot;
+                      </p>
+                    )}
+                  </div>
                 )}
               </CardContent>
             </Card>

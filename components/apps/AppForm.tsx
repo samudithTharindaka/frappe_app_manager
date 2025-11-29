@@ -21,6 +21,8 @@ interface AppFormProps {
 export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
   const [tags, setTags] = useState<string[]>(defaultValues?.tags || []);
   const [tagInput, setTagInput] = useState("");
+  const [fetchedGitHubData, setFetchedGitHubData] = useState<any>(null);
+  const [shouldFetchGitHub, setShouldFetchGitHub] = useState(false);
   const fetchGitHub = useFetchGitHub();
 
   const {
@@ -68,9 +70,10 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
         setValue("description", data.description);
       }
       
-      // Store GitHub metadata in form (will be saved to app model)
-      // Note: These fields are part of the app model but not in the form
-      // They will be added by the onSubmit handler
+      // Store fetched GitHub metadata to be included in submit
+      setFetchedGitHubData(data);
+      setShouldFetchGitHub(false); // Reset the flag
+      console.log("✅ GitHub data stored in state, will be included on submit");
     }
   };
 
@@ -93,12 +96,25 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
   };
 
   const onFormSubmit = async (data: any) => {
-    // If we have a GitHub URL, fetch the metadata before submitting
+    // Use the fetched GitHub data if available (from "Fetch Data" button)
+    // Otherwise, fetch it if the URL changed
     let githubMetadata = {};
     
-    if (data.githubRepoUrl && data.githubRepoUrl !== defaultValues?.githubRepoUrl) {
+    if (fetchedGitHubData) {
+      // User clicked "Fetch Data" button - use that data
+      console.log("✅ Using fetched GitHub data from button click");
+      githubMetadata = {
+        repoName: fetchedGitHubData.repoName,
+        repoOwner: fetchedGitHubData.repoOwner,
+        stars: fetchedGitHubData.stars,
+        lastCommit: fetchedGitHubData.lastCommit,
+        branches: fetchedGitHubData.branches,
+        readme: fetchedGitHubData.readme,
+      };
+    } else if (data.githubRepoUrl && data.githubRepoUrl !== defaultValues?.githubRepoUrl) {
+      // GitHub URL changed - auto-fetch
       try {
-        console.log("📤 Fetching GitHub metadata before submit:", data.githubRepoUrl);
+        console.log("📤 GitHub URL changed, fetching metadata before submit:", data.githubRepoUrl);
         const metadata = await fetchGitHub.mutateAsync(data.githubRepoUrl);
         githubMetadata = {
           repoName: metadata.repoName,
@@ -120,8 +136,11 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
     
     const finalData = { ...data, tags, ...githubMetadata };
     console.log("💾 Submitting app data:", {
-      ...finalData,
-      readme: finalData.readme ? `${finalData.readme.length} chars` : 'none',
+      name: finalData.name,
+      clientName: finalData.clientName,
+      hasReadme: !!finalData.readme,
+      readmeLength: finalData.readme?.length || 0,
+      allKeys: Object.keys(finalData),
     });
     
     onSubmit(finalData);
