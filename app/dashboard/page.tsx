@@ -112,7 +112,7 @@ export default function DashboardPage() {
             transition={{ delay: 0.4 }}
             className="lg:col-span-2"
           >
-            <Card className="border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+            <Card className="border border-gray-200 hover:border-indigo-200 hover:shadow-lg transition-all duration-300">
               <CardHeader className="border-b border-gray-100 bg-gray-50/50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -201,7 +201,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <Card className="border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+            <Card className="border border-gray-200 hover:border-indigo-200 hover:shadow-lg transition-all duration-300">
               <CardHeader className="border-b border-gray-100 bg-gray-50/50">
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
