@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+// Configure middleware to use Node.js runtime instead of Edge runtime
+export const runtime = "nodejs";
+
 export default auth((req) => {
   const token = req.auth;
   const isAuth = !!token;
