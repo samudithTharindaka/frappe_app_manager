@@ -29,92 +29,87 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
   const canDelete = userRole === "Admin";
 
   const statusColors = {
-    Active: "bg-green-500/10 text-green-700 border-green-500/20",
-    Deprecated: "bg-red-500/10 text-red-700 border-red-500/20",
-    Internal: "bg-blue-500/10 text-blue-700 border-blue-500/20",
+    Active: "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100",
+    Deprecated: "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100",
+    Internal: "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100",
   };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.3 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.2 }}
     >
-      <Card className="group relative overflow-hidden border-gray-200 bg-white hover:shadow-xl transition-all duration-300">
-        {/* Gradient Background on Hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <Card className="group relative overflow-hidden border border-gray-200 bg-white hover:border-indigo-200 hover:shadow-lg transition-all duration-300">
+        {/* Subtle accent on hover */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
         
-        {/* Status Badge - Top Right */}
-        <div className="absolute top-4 right-4 z-10">
-          <Badge 
-            className={`${statusColors[app.status as keyof typeof statusColors]} backdrop-blur-sm`}
-            variant="outline"
-          >
-            {app.status}
-          </Badge>
-        </div>
-
-        <CardHeader className="pb-3 relative">
-          {/* App Name */}
-          <Link href={`/apps/${app._id}`}>
-            <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-1 pr-20">
-              {app.name}
-            </h3>
-          </Link>
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <Link href={`/apps/${app._id}`} className="flex-1 min-w-0">
+              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                {app.name}
+              </h3>
+            </Link>
+            
+            <Badge 
+              className={`${statusColors[app.status as keyof typeof statusColors]} shrink-0 font-medium`}
+              variant="outline"
+            >
+              {app.status}
+            </Badge>
+          </div>
           
-          {/* Client Name */}
-          <p className="text-sm text-gray-500 font-medium">
+          <p className="text-sm text-gray-600 font-medium mt-1">
             {app.clientName}
           </p>
         </CardHeader>
 
-        <CardContent className="space-y-4 relative">
+        <CardContent className="space-y-4">
           {/* Description */}
-          <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem]">
+          <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem] leading-relaxed">
             {app.description}
           </p>
 
           {/* GitHub & Frappe Cloud Links */}
-          <div className="flex flex-wrap gap-2">
-            {app.githubRepoUrl && (
-              <motion.a
-                href={app.githubRepoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Github className="h-3.5 w-3.5" />
-                Repository
-                <ExternalLink className="h-3 w-3" />
-              </motion.a>
-            )}
-            
-            {app.frappeCloudUrl && (
-              <motion.a
-                href={app.frappeCloudUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-800 bg-purple-100 hover:bg-purple-200 px-3 py-1.5 rounded-full transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Cloud className="h-3.5 w-3.5" />
-                Frappe Cloud
-                <ExternalLink className="h-3 w-3" />
-              </motion.a>
-            )}
-          </div>
+          {(app.githubRepoUrl || app.frappeCloudUrl) && (
+            <div className="flex flex-wrap gap-2">
+              {app.githubRepoUrl && (
+                <a
+                  href={app.githubRepoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-md border border-gray-200 transition-colors"
+                >
+                  <Github className="h-3.5 w-3.5" />
+                  <span>Repository</span>
+                  <ExternalLink className="h-3 w-3 opacity-60" />
+                </a>
+              )}
+              
+              {app.frappeCloudUrl && (
+                <a
+                  href={app.frappeCloudUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-md border border-indigo-200 transition-colors"
+                >
+                  <Cloud className="h-3.5 w-3.5" />
+                  <span>Frappe Cloud</span>
+                  <ExternalLink className="h-3 w-3 opacity-60" />
+                </a>
+              )}
+            </div>
+          )}
 
           {/* GitHub Stats */}
           {(app.stars !== undefined || app.branches) && (
             <div className="flex items-center gap-4 text-xs text-gray-500">
               {app.stars !== undefined && (
                 <div className="flex items-center gap-1">
-                  <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                   <span>{app.stars}</span>
                 </div>
               )}
@@ -134,13 +129,13 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
                 <Badge
                   key={tag}
                   variant="secondary"
-                  className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                  className="text-xs bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 font-normal"
                 >
                   {tag}
                 </Badge>
               ))}
               {app.tags.length > 3 && (
-                <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700">
+                <Badge variant="secondary" className="text-xs bg-gray-50 text-gray-600 border border-gray-200 font-normal">
                   +{app.tags.length - 3}
                 </Badge>
               )}
@@ -148,7 +143,7 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
           )}
 
           {/* Version & Last Updated */}
-          <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t">
+          <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
             <div className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" />
               <span>
@@ -156,25 +151,25 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
               </span>
             </div>
             {app.version && (
-              <span className="font-mono font-medium text-purple-600">
+              <span className="font-mono font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
                 v{app.version}
               </span>
             )}
           </div>
         </CardContent>
 
-        <CardFooter className="gap-2 pt-4 border-t relative bg-gray-50/50">
+        <CardFooter className="gap-2 pt-4 border-t border-gray-100 bg-gray-50/50">
           <Link href={`/apps/${app._id}`} className="flex-1">
-            <Button variant="outline" size="sm" className="w-full group/btn">
-              <Eye className="h-4 w-4 mr-2 group-hover/btn:scale-110 transition-transform" />
+            <Button variant="outline" size="sm" className="w-full hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-300">
+              <Eye className="h-4 w-4 mr-2" />
               View Details
             </Button>
           </Link>
           
           {canEdit && (
             <Link href={`/apps/${app._id}/edit`}>
-              <Button variant="outline" size="sm" className="group/btn">
-                <Edit className="h-4 w-4 group-hover/btn:rotate-12 transition-transform" />
+              <Button variant="outline" size="sm" className="hover:bg-gray-50">
+                <Edit className="h-4 w-4" />
               </Button>
             </Link>
           )}
@@ -184,9 +179,9 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
               variant="outline"
               size="sm"
               onClick={() => onDelete(app._id)}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50 group/btn"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-200"
             >
-              <Trash2 className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+              <Trash2 className="h-4 w-4" />
             </Button>
           )}
         </CardFooter>
@@ -194,4 +189,3 @@ export function AppCard({ app, onDelete, userRole }: AppCardProps) {
     </motion.div>
   );
 }
-

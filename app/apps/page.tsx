@@ -56,7 +56,7 @@ function AppsListContent() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.05,
       },
     },
   };
@@ -64,89 +64,73 @@ function AppsListContent() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header with Animated Title */}
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Custom Apps
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900">Custom Apps</h1>
             <p className="text-gray-600 mt-1">
               Manage your Frappe custom applications
             </p>
           </div>
 
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link href="/apps/new">
-              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg">
-                <Plus className="mr-2 h-5 w-5" />
-                Add New App
-              </Button>
-            </Link>
-          </motion.div>
+          <Link href="/apps/new">
+            <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+              <Plus className="mr-2 h-5 w-5" />
+              Add New App
+            </Button>
+          </Link>
         </motion.div>
 
         {/* Stats Cards */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-lg"
-          >
-            <p className="text-sm font-medium opacity-90">Total Apps</p>
-            <p className="text-3xl font-bold mt-1">{stats.total}</p>
-          </motion.div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-indigo-200 hover:shadow-md transition-all">
+            <p className="text-sm font-medium text-gray-600">Total Apps</p>
+            <p className="text-3xl font-bold text-gray-900 mt-1">{stats.total}</p>
+          </div>
           
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white shadow-lg"
-          >
-            <p className="text-sm font-medium opacity-90">Active</p>
-            <p className="text-3xl font-bold mt-1">{stats.active}</p>
-          </motion.div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-emerald-200 hover:shadow-md transition-all">
+            <p className="text-sm font-medium text-gray-600">Active</p>
+            <p className="text-3xl font-bold text-emerald-600 mt-1">{stats.active}</p>
+          </div>
           
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg"
-          >
-            <p className="text-sm font-medium opacity-90">Internal</p>
-            <p className="text-3xl font-bold mt-1">{stats.internal}</p>
-          </motion.div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-200 hover:shadow-md transition-all">
+            <p className="text-sm font-medium text-gray-600">Internal</p>
+            <p className="text-3xl font-bold text-blue-600 mt-1">{stats.internal}</p>
+          </div>
           
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-4 text-white shadow-lg"
-          >
-            <p className="text-sm font-medium opacity-90">Deprecated</p>
-            <p className="text-3xl font-bold mt-1">{stats.deprecated}</p>
-          </motion.div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-gray-300 hover:shadow-md transition-all">
+            <p className="text-sm font-medium text-gray-600">Deprecated</p>
+            <p className="text-3xl font-bold text-gray-600 mt-1">{stats.deprecated}</p>
+          </div>
         </motion.div>
 
         {/* Search and Filters */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl shadow-md p-4 space-y-4"
+          className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 space-y-4"
         >
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search Bar */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search apps..."
+                placeholder="Search apps by name, client, or description..."
                 value={filters.search}
                 onChange={(e) =>
                   setFilters({ ...filters, search: e.target.value })
                 }
-                className="pl-10"
+                className="pl-10 border-gray-200 focus:border-indigo-300 focus:ring-indigo-200"
               />
             </div>
 
@@ -156,17 +140,17 @@ function AppsListContent() {
                 variant={showFilters ? "default" : "outline"}
                 size="icon"
                 onClick={() => setShowFilters(!showFilters)}
-                className={showFilters ? "bg-purple-600" : ""}
+                className={showFilters ? "bg-indigo-600 hover:bg-indigo-700" : "hover:bg-gray-50"}
               >
                 <Filter className="h-4 w-4" />
               </Button>
               
-              <div className="flex border rounded-lg">
+              <div className="flex border border-gray-200 rounded-lg">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="icon"
                   onClick={() => setViewMode("grid")}
-                  className={viewMode === "grid" ? "bg-purple-600" : ""}
+                  className={viewMode === "grid" ? "bg-indigo-600 hover:bg-indigo-700" : "hover:bg-gray-50"}
                 >
                   <Grid3x3 className="h-4 w-4" />
                 </Button>
@@ -174,7 +158,7 @@ function AppsListContent() {
                   variant={viewMode === "list" ? "default" : "ghost"}
                   size="icon"
                   onClick={() => setViewMode("list")}
-                  className={viewMode === "list" ? "bg-purple-600" : ""}
+                  className={viewMode === "list" ? "bg-indigo-600 hover:bg-indigo-700" : "hover:bg-gray-50"}
                 >
                   <List className="h-4 w-4" />
                 </Button>
@@ -189,8 +173,8 @@ function AppsListContent() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="flex flex-col md:flex-row gap-4 pt-4 border-t overflow-hidden"
+                transition={{ duration: 0.2 }}
+                className="flex flex-col md:flex-row gap-4 pt-4 border-t border-gray-100 overflow-hidden"
               >
                 <div className="flex-1">
                   <label className="text-sm font-medium text-gray-700 mb-1.5 block">
@@ -202,7 +186,7 @@ function AppsListContent() {
                       setFilters({ ...filters, status: value === "all" ? "" : value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="border-gray-200">
                       <SelectValue placeholder="All Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -224,6 +208,7 @@ function AppsListContent() {
                     onChange={(e) =>
                       setFilters({ ...filters, tags: e.target.value })
                     }
+                    className="border-gray-200"
                   />
                 </div>
               </motion.div>
@@ -235,11 +220,11 @@ function AppsListContent() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex flex-wrap gap-2 items-center"
+              className="flex flex-wrap gap-2 items-center pt-2 border-t border-gray-100"
             >
-              <span className="text-sm text-gray-600">Active filters:</span>
+              <span className="text-sm text-gray-600 font-medium">Active filters:</span>
               {filters.search && (
-                <Badge variant="secondary" className="gap-1">
+                <Badge variant="secondary" className="gap-1 bg-gray-100 text-gray-700 hover:bg-gray-200">
                   Search: {filters.search}
                   <button
                     onClick={() => setFilters({ ...filters, search: "" })}
@@ -250,7 +235,7 @@ function AppsListContent() {
                 </Badge>
               )}
               {filters.status && (
-                <Badge variant="secondary" className="gap-1">
+                <Badge variant="secondary" className="gap-1 bg-gray-100 text-gray-700 hover:bg-gray-200">
                   Status: {filters.status}
                   <button
                     onClick={() => setFilters({ ...filters, status: "" })}
@@ -261,7 +246,7 @@ function AppsListContent() {
                 </Badge>
               )}
               {filters.tags && (
-                <Badge variant="secondary" className="gap-1">
+                <Badge variant="secondary" className="gap-1 bg-gray-100 text-gray-700 hover:bg-gray-200">
                   Tags: {filters.tags}
                   <button
                     onClick={() => setFilters({ ...filters, tags: "" })}
@@ -275,7 +260,7 @@ function AppsListContent() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setFilters({ search: "", status: "", tags: "" })}
-                className="text-xs"
+                className="text-xs h-7 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
               >
                 Clear all
               </Button>
@@ -286,15 +271,15 @@ function AppsListContent() {
         {/* Apps Grid/List */}
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
           </div>
         ) : apps.length === 0 ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-20 bg-white rounded-xl shadow-md"
+            className="text-center py-20 bg-white rounded-lg border border-gray-200 shadow-sm"
           >
-            <div className="text-gray-400 mb-4">
+            <div className="text-gray-300 mb-4">
               <Grid3x3 className="h-16 w-16 mx-auto" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -307,7 +292,7 @@ function AppsListContent() {
             </p>
             {!filters.search && !filters.status && !filters.tags && (
               <Link href="/apps/new">
-                <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
+                <Button className="bg-indigo-600 hover:bg-indigo-700">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Your First App
                 </Button>
@@ -347,7 +332,7 @@ export default function AppsListPage() {
     <Suspense fallback={
       <DashboardLayout>
         <div className="flex items-center justify-center h-96">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
         </div>
       </DashboardLayout>
     }>
