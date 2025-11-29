@@ -50,9 +50,17 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
     const data = await fetchGitHub.mutateAsync(githubRepoUrl);
     
     if (data) {
-      setValue("name", data.repoName || watch("name"));
-      setValue("description", data.description || watch("description"));
-      // Note: README will be stored separately in the app model
+      // Auto-populate form fields
+      if (data.repoName && !watch("name")) {
+        setValue("name", data.repoName);
+      }
+      if (data.description && !watch("description")) {
+        setValue("description", data.description);
+      }
+      
+      // Store GitHub metadata in form (will be saved to app model)
+      // Note: These fields are part of the app model but not in the form
+      // They will be added by the onSubmit handler
     }
   };
 
@@ -74,8 +82,28 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
     setValue("tags", newTags);
   };
 
-  const onFormSubmit = (data: any) => {
-    onSubmit({ ...data, tags });
+  const onFormSubmit = async (data: any) => {
+    // If we have a GitHub URL, fetch the metadata before submitting
+    let githubMetadata = {};
+    
+    if (data.githubRepoUrl && data.githubRepoUrl !== defaultValues?.githubRepoUrl) {
+      try {
+        const metadata = await fetchGitHub.mutateAsync(data.githubRepoUrl);
+        githubMetadata = {
+          repoName: metadata.repoName,
+          repoOwner: metadata.repoOwner,
+          stars: metadata.stars,
+          lastCommit: metadata.lastCommit,
+          branches: metadata.branches,
+          readme: metadata.readme,
+        };
+      } catch (error) {
+        console.error("Failed to fetch GitHub metadata:", error);
+        // Continue with form submission even if GitHub fetch fails
+      }
+    }
+    
+    onSubmit({ ...data, tags, ...githubMetadata });
   };
 
   return (
