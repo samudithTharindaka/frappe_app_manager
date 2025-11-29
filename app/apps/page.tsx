@@ -83,14 +83,14 @@ export default function AppsListPage() {
               className="flex-1"
             />
             <Select
-              value={filters.status}
-              onValueChange={(value) => setFilters({ ...filters, status: value })}
+              value={filters.status || "all"}
+              onValueChange={(value) => setFilters({ ...filters, status: value === "all" ? "" : value })}
             >
               <SelectTrigger className="w-full md:w-48">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="Active">Active</SelectItem>
                 <SelectItem value="Deprecated">Deprecated</SelectItem>
                 <SelectItem value="Internal">Internal</SelectItem>
