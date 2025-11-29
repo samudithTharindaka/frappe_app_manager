@@ -1,3 +1,9 @@
+// Load environment variables FIRST before any other imports
+import dotenv from "dotenv";
+import path from "path";
+dotenv.config({ path: path.join(__dirname, "../.env.local") });
+
+// Now import other modules
 import mongoose from "mongoose";
 import connectDB from "../lib/mongodb";
 import User from "../models/User";

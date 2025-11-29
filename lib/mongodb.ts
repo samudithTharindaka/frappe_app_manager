@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI || "";
-
-function checkMongoDBUri() {
-  if (!MONGODB_URI) {
+function getMongoDBUri() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
     throw new Error(
       "Please define the MONGODB_URI environment variable inside .env.local"
     );
   }
+  return uri;
 }
 
 /**
@@ -31,7 +31,7 @@ if (!global.mongoose) {
 }
 
 async function connectDB(): Promise<typeof mongoose> {
-  checkMongoDBUri();
+  const MONGODB_URI = getMongoDBUri();
   
   if (cached.conn) {
     return cached.conn;
