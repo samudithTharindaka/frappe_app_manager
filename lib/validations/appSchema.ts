@@ -9,6 +9,14 @@ export const appSchema = z.object({
   version: z.string().default("1.0.0"),
   tags: z.array(z.string()).default([]),
   status: z.enum(["Active", "Deprecated", "Internal"]).default("Active"),
+  
+  // GitHub metadata fields (optional, fetched from GitHub API)
+  repoName: z.string().optional(),
+  repoOwner: z.string().optional(),
+  stars: z.number().optional(),
+  lastCommit: z.date().or(z.string()).optional(),
+  branches: z.array(z.string()).optional(),
+  readme: z.string().optional(),
 });
 
 export const appUpdateSchema = appSchema.partial();
