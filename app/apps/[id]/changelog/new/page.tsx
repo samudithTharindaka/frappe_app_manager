@@ -1,17 +1,19 @@
 "use client";
 
+import { use } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateChangelog } from "@/hooks/useChangelog";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { ChangelogForm } from "@/components/forms/ChangelogForm";
 
-export default function NewChangelogPage({ params }: { params: { id: string } }) {
+export default function NewChangelogPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const createChangelog = useCreateChangelog();
 
   const handleSubmit = async (data: any) => {
-    await createChangelog.mutateAsync({ appId: params.id, data });
-    router.push(`/apps/${params.id}?tab=changelog`);
+    await createChangelog.mutateAsync({ appId: id, data });
+    router.push(`/apps/${id}?tab=changelog`);
   };
 
   return (

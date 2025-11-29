@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUploadAttachment } from "@/hooks/useAttachments";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
-export default function UploadAttachmentPage({ params }: { params: { id: string } }) {
+export default function UploadAttachmentPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const uploadAttachment = useUploadAttachment();
@@ -40,8 +41,8 @@ export default function UploadAttachmentPage({ params }: { params: { id: string 
     const formData = new FormData();
     formData.append("file", file);
 
-    await uploadAttachment.mutateAsync({ appId: params.id, formData });
-    router.push(`/apps/${params.id}?tab=attachments`);
+    await uploadAttachment.mutateAsync({ appId: id, formData });
+    router.push(`/apps/${id}?tab=attachments`);
   };
 
   return (

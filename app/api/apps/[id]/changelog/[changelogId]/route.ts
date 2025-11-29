@@ -7,7 +7,7 @@ import { getSession } from "@/lib/auth";
 // PATCH /api/apps/[id]/changelog/[changelogId] - Update changelog
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string; changelogId: string } }
+  { params }: { params: Promise<{ id: string; changelogId: string }> }
 ) {
   try {
     const session = await getSession();
@@ -29,8 +29,9 @@ export async function PATCH(
     const body = await request.json();
     const validatedData = changelogUpdateSchema.parse(body);
 
+    const { changelogId } = await params;
     const changelog = await Changelog.findByIdAndUpdate(
-      params.changelogId,
+      changelogId,
       { $set: validatedData },
       { new: true, runValidators: true }
     ).populate("createdBy", "name email");
@@ -63,7 +64,7 @@ export async function PATCH(
 // DELETE /api/apps/[id]/changelog/[changelogId] - Delete changelog
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; changelogId: string } }
+  { params }: { params: Promise<{ id: string; changelogId: string }> }
 ) {
   try {
     const session = await getSession();
@@ -82,7 +83,8 @@ export async function DELETE(
 
     await connectDB();
 
-    const changelog = await Changelog.findByIdAndDelete(params.changelogId);
+    const { changelogId } = await params;
+    const changelog = await Changelog.findByIdAndDelete(changelogId);
 
     if (!changelog) {
       return NextResponse.json(

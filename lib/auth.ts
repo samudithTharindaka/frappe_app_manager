@@ -25,7 +25,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             throw new Error("Invalid email or password");
           }
 
-          const isPasswordValid = await user.comparePassword(credentials.password);
+          const isPasswordValid = await user.comparePassword(credentials.password as string);
 
           if (!isPasswordValid) {
             throw new Error("Invalid email or password");

@@ -6,7 +6,7 @@ import { getSession } from "@/lib/auth";
 // DELETE /api/apps/[id]/attachments/[attachmentId] - Delete attachment
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; attachmentId: string } }
+  { params }: { params: Promise<{ id: string; attachmentId: string }> }
 ) {
   try {
     const session = await getSession();
@@ -25,7 +25,8 @@ export async function DELETE(
 
     await connectDB();
 
-    const attachment = await Attachment.findByIdAndDelete(params.attachmentId);
+    const { attachmentId } = await params;
+    const attachment = await Attachment.findByIdAndDelete(attachmentId);
 
     if (!attachment) {
       return NextResponse.json(

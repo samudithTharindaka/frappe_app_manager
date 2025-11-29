@@ -7,7 +7,7 @@ import { getSession } from "@/lib/auth";
 // GET /api/apps/[id]/attachments - List all attachments
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -18,7 +18,8 @@ export async function GET(
 
     await connectDB();
 
-    const attachments = await Attachment.find({ appId: params.id })
+    const { id } = await params;
+    const attachments = await Attachment.find({ appId: id })
       .populate("uploadedBy", "name email")
       .sort({ uploadedAt: -1 });
 
@@ -35,7 +36,7 @@ export async function GET(
 // POST /api/apps/[id]/attachments - Upload file
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -66,8 +67,9 @@ export async function POST(
 
     const uploadResult = await uploadFile(file);
 
+    const { id } = await params;
     const attachment = await Attachment.create({
-      appId: params.id,
+      appId: id,
       filename: uploadResult.filename,
       fileUrl: uploadResult.url,
       fileType: file.type,

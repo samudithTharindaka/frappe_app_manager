@@ -1,17 +1,19 @@
 "use client";
 
+import { use } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateDoc } from "@/hooks/useDocs";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { DocForm } from "@/components/docs/DocForm";
 
-export default function NewDocPage({ params }: { params: { id: string } }) {
+export default function NewDocPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const createDoc = useCreateDoc();
 
   const handleSubmit = async (data: any) => {
-    await createDoc.mutateAsync({ appId: params.id, data });
-    router.push(`/apps/${params.id}?tab=docs`);
+    await createDoc.mutateAsync({ appId: id, data });
+    router.push(`/apps/${id}?tab=docs`);
   };
 
   return (

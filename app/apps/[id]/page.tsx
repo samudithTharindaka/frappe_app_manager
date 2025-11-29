@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useApp } from "@/hooks/useApp";
@@ -16,12 +17,13 @@ import { Separator } from "@/components/ui/separator";
 import { PageSkeleton } from "@/components/common/LoadingSkeleton";
 import { format } from "date-fns";
 
-export default function AppDetailsPage({ params }: { params: { id: string } }) {
+export default function AppDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const { data: session } = useSession();
-  const { data: app, isLoading: appLoading } = useApp(params.id);
-  const { data: docs } = useDocs(params.id);
-  const { data: changelogs } = useChangelog(params.id);
-  const { data: attachments } = useAttachments(params.id);
+  const { data: app, isLoading: appLoading } = useApp(id);
+  const { data: docs } = useDocs(id);
+  const { data: changelogs } = useChangelog(id);
+  const { data: attachments } = useAttachments(id);
 
   const userRole = (session?.user as any)?.role;
   const canEdit = ["Admin", "Dev"].includes(userRole);
@@ -64,7 +66,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
           </div>
           {canEdit && (
             <Button asChild>
-              <Link href={`/apps/${params.id}/edit`}>Edit App</Link>
+              <Link href={`/apps/${id}/edit`}>Edit App</Link>
             </Button>
           )}
         </div>
@@ -191,7 +193,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
               <h2 className="text-xl font-semibold">Documentation</h2>
               {canEdit && (
                 <Button asChild>
-                  <Link href={`/apps/${params.id}/docs/new`}>Add Documentation</Link>
+                  <Link href={`/apps/${id}/docs/new`}>Add Documentation</Link>
                 </Button>
               )}
             </div>
@@ -202,7 +204,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
                   <p className="text-gray-500">No documentation yet</p>
                   {canEdit && (
                     <Button asChild className="mt-4">
-                      <Link href={`/apps/${params.id}/docs/new`}>Add First Document</Link>
+                      <Link href={`/apps/${id}/docs/new`}>Add First Document</Link>
                     </Button>
                   )}
                 </CardContent>
@@ -221,7 +223,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
                         </div>
                         {canEdit && (
                           <Button variant="outline" size="sm" asChild>
-                            <Link href={`/apps/${params.id}/docs/${doc._id}/edit`}>
+                            <Link href={`/apps/${id}/docs/${doc._id}/edit`}>
                               Edit
                             </Link>
                           </Button>
@@ -243,7 +245,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
               <h2 className="text-xl font-semibold">Changelog</h2>
               {canEdit && (
                 <Button asChild>
-                  <Link href={`/apps/${params.id}/changelog/new`}>Add Changelog</Link>
+                  <Link href={`/apps/${id}/changelog/new`}>Add Changelog</Link>
                 </Button>
               )}
             </div>
@@ -254,7 +256,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
                   <p className="text-gray-500">No changelog entries yet</p>
                   {canEdit && (
                     <Button asChild className="mt-4">
-                      <Link href={`/apps/${params.id}/changelog/new`}>Add First Entry</Link>
+                      <Link href={`/apps/${id}/changelog/new`}>Add First Entry</Link>
                     </Button>
                   )}
                 </CardContent>
@@ -289,7 +291,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
               <h2 className="text-xl font-semibold">Attachments</h2>
               {canEdit && (
                 <Button asChild>
-                  <Link href={`/apps/${params.id}/attachments/upload`}>Upload File</Link>
+                  <Link href={`/apps/${id}/attachments/upload`}>Upload File</Link>
                 </Button>
               )}
             </div>
@@ -300,7 +302,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
                   <p className="text-gray-500">No attachments yet</p>
                   {canEdit && (
                     <Button asChild className="mt-4">
-                      <Link href={`/apps/${params.id}/attachments/upload`}>
+                      <Link href={`/apps/${id}/attachments/upload`}>
                         Upload First File
                       </Link>
                     </Button>
@@ -373,7 +375,7 @@ export default function AppDetailsPage({ params }: { params: { id: string } }) {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Button asChild>
-                    <Link href={`/apps/${params.id}/edit`}>Edit App Details</Link>
+                    <Link href={`/apps/${id}/edit`}>Edit App Details</Link>
                   </Button>
                   <Separator />
                   <div>

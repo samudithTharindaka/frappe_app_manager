@@ -7,7 +7,7 @@ import { getSession } from "@/lib/auth";
 // GET /api/apps/[id]/changelog - List all changelogs
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -18,7 +18,8 @@ export async function GET(
 
     await connectDB();
 
-    const changelogs = await Changelog.find({ appId: params.id })
+    const { id } = await params;
+    const changelogs = await Changelog.find({ appId: id })
       .populate("createdBy", "name email")
       .sort({ releaseDate: -1 });
 
@@ -35,7 +36,7 @@ export async function GET(
 // POST /api/apps/[id]/changelog - Create changelog entry
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -57,9 +58,10 @@ export async function POST(
     const body = await request.json();
     const validatedData = changelogSchema.parse(body);
 
+    const { id } = await params;
     const changelog = await Changelog.create({
       ...validatedData,
-      appId: params.id,
+      appId: id,
       createdBy: (session.user as any).id,
     });
 

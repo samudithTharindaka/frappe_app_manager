@@ -1,19 +1,21 @@
 "use client";
 
+import { use } from "react";
 import { useRouter } from "next/navigation";
 import { useApp, useUpdateApp } from "@/hooks/useApp";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { AppForm } from "@/components/apps/AppForm";
 import { PageSkeleton } from "@/components/common/LoadingSkeleton";
 
-export default function EditAppPage({ params }: { params: { id: string } }) {
+export default function EditAppPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
-  const { data: app, isLoading } = useApp(params.id);
+  const { data: app, isLoading } = useApp(id);
   const updateApp = useUpdateApp();
 
   const handleSubmit = async (data: any) => {
-    await updateApp.mutateAsync({ id: params.id, data });
-    router.push(`/apps/${params.id}`);
+    await updateApp.mutateAsync({ id, data });
+    router.push(`/apps/${id}`);
   };
 
   if (isLoading) {

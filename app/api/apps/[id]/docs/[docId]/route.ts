@@ -7,7 +7,7 @@ import { getSession } from "@/lib/auth";
 // GET /api/apps/[id]/docs/[docId] - Get single doc
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; docId: string } }
+  { params }: { params: Promise<{ id: string; docId: string }> }
 ) {
   try {
     const session = await getSession();
@@ -18,7 +18,8 @@ export async function GET(
 
     await connectDB();
 
-    const doc = await Documentation.findById(params.docId).populate(
+    const { docId } = await params;
+    const doc = await Documentation.findById(docId).populate(
       "createdBy",
       "name email"
     );
@@ -43,7 +44,7 @@ export async function GET(
 // PATCH /api/apps/[id]/docs/[docId] - Update doc
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string; docId: string } }
+  { params }: { params: Promise<{ id: string; docId: string }> }
 ) {
   try {
     const session = await getSession();
@@ -65,8 +66,9 @@ export async function PATCH(
     const body = await request.json();
     const validatedData = docUpdateSchema.parse(body);
 
+    const { docId } = await params;
     const doc = await Documentation.findByIdAndUpdate(
-      params.docId,
+      docId,
       { $set: validatedData },
       { new: true, runValidators: true }
     ).populate("createdBy", "name email");
@@ -99,7 +101,7 @@ export async function PATCH(
 // DELETE /api/apps/[id]/docs/[docId] - Delete doc
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; docId: string } }
+  { params }: { params: Promise<{ id: string; docId: string }> }
 ) {
   try {
     const session = await getSession();
@@ -118,7 +120,8 @@ export async function DELETE(
 
     await connectDB();
 
-    const doc = await Documentation.findByIdAndDelete(params.docId);
+    const { docId } = await params;
+    const doc = await Documentation.findByIdAndDelete(docId);
 
     if (!doc) {
       return NextResponse.json(

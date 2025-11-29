@@ -7,7 +7,7 @@ import { getSession } from "@/lib/auth";
 // GET /api/apps/[id]/docs - List all docs for an app
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -18,7 +18,8 @@ export async function GET(
 
     await connectDB();
 
-    const docs = await Documentation.find({ appId: params.id })
+    const { id } = await params;
+    const docs = await Documentation.find({ appId: id })
       .populate("createdBy", "name email")
       .sort({ order: 1, createdAt: 1 });
 
@@ -35,7 +36,7 @@ export async function GET(
 // POST /api/apps/[id]/docs - Create new doc
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getSession();
@@ -57,9 +58,10 @@ export async function POST(
     const body = await request.json();
     const validatedData = docSchema.parse(body);
 
+    const { id } = await params;
     const doc = await Documentation.create({
       ...validatedData,
-      appId: params.id,
+      appId: id,
       createdBy: (session.user as any).id,
     });
 
