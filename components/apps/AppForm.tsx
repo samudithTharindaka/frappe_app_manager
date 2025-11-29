@@ -18,6 +18,15 @@ interface AppFormProps {
   isLoading?: boolean;
 }
 
+interface GitHubMetadata {
+  repoName?: string;
+  repoOwner?: string;
+  stars?: number;
+  lastCommit?: Date;
+  branches?: string[];
+  readme?: string;
+}
+
 export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
   const [tags, setTags] = useState<string[]>(defaultValues?.tags || []);
   const [tagInput, setTagInput] = useState("");
@@ -98,7 +107,7 @@ export function AppForm({ defaultValues, onSubmit, isLoading }: AppFormProps) {
   const onFormSubmit = async (data: any) => {
     // Use the fetched GitHub data if available (from "Fetch Data" button)
     // Otherwise, fetch it if the URL changed
-    let githubMetadata = {};
+    let githubMetadata: GitHubMetadata = {};
     
     if (fetchedGitHubData) {
       // User clicked "Fetch Data" button - use that data
